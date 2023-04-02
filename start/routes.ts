@@ -18,22 +18,22 @@
 |
 */
 
-import Route from '@ioc:Adonis/Core/Route'
+import Route from '@ioc:Adonis/Core/Route';
 
 Route.get('/', async () => {
-  return { hello: 'world' }
-})
+  return { hello: 'world' };
+});
 
 const testRoute = () => {
   Route.get('/', async ({ auth }) => {
-    const user = await auth.authenticate()
-    return { user: user.serialize() }
-  })
-}
+    const user = await auth.authenticate();
+    return { user: user.serialize() };
+  });
+};
 
 Route.group(() => {
-  Route.post('register', 'AuthController.register')
-  Route.post('login', 'AuthController.login')
+  Route.post('register', 'AuthController.register');
+  Route.post('login', 'AuthController.login');
 
-  Route.group(testRoute).middleware('auth:api')
-}).prefix('api')
+  Route.group(testRoute).middleware('auth:api');
+}).prefix('api');
