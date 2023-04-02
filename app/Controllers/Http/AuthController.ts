@@ -30,6 +30,6 @@ export default class AuthController {
       expiresIn: '10 days',
     })
 
-    return token.toJSON()
+    return { user: user.serialize(), token: token.toJSON().token }
   }
 }
