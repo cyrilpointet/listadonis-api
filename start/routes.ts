@@ -27,13 +27,28 @@ Route.get('/', async () => {
 const testRoute = () => {
   Route.get('/', async ({ auth }) => {
     const user = await auth.authenticate();
+    await user.load('bands');
     return { user: user.serialize() };
   });
 };
 
+const bandRoutes = () => {
+  Route.post('/', 'BandsController.create');
+  Route.group(() => {
+    Route.get('/:id', 'BandsController.read');
+    Route.put('/:id', 'BandsController.update');
+    Route.delete('/:id', 'BandsController.delete');
+  }).middleware('bandMember');
+};
+
 Route.group(() => {
+  // test
+  Route.group(testRoute).middleware('auth:api');
+
+  // login - register
   Route.post('register', 'AuthController.register');
   Route.post('login', 'AuthController.login');
 
-  Route.group(testRoute).middleware('auth:api');
+  // band
+  Route.group(bandRoutes).middleware('auth:api').prefix('band');
 }).prefix('api');
