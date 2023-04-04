@@ -33,12 +33,14 @@ const testRoute = () => {
 };
 
 const bandRoutes = () => {
-  Route.post('/', 'BandsController.create');
+  Route.post('/', 'BandsController.create').middleware('auth:api');
   Route.group(() => {
     Route.get('/:id', 'BandsController.read');
     Route.put('/:id', 'BandsController.update');
     Route.delete('/:id', 'BandsController.delete');
-  }).middleware('bandMember');
+  })
+    .middleware('auth:api')
+    .middleware('bandMember');
 };
 
 Route.group(() => {
@@ -50,5 +52,5 @@ Route.group(() => {
   Route.post('login', 'AuthController.login');
 
   // band
-  Route.group(bandRoutes).middleware('auth:api').prefix('band');
+  Route.group(bandRoutes).prefix('band');
 }).prefix('api');
