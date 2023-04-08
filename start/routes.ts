@@ -38,6 +38,8 @@ const bandRoutes = () => {
     Route.get('/:id', 'BandsController.read');
     Route.put('/:id', 'BandsController.update');
     Route.delete('/:id', 'BandsController.delete');
+    Route.post('/:id/addMember', 'BandsController.addMember');
+    Route.post('/:id/removeMember', 'BandsController.removeMember');
   })
     .middleware('auth:api')
     .middleware('bandMember');

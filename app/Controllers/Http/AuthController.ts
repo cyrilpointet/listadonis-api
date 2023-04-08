@@ -16,6 +16,7 @@ export default class AuthController {
       expiresIn: '10 days',
     });
     const user = await User.findByOrFail('email', email);
+    await user.load('bands');
     return { user: user.serialize(), token: token.toJSON().token };
   }
 
@@ -29,6 +30,8 @@ export default class AuthController {
     user.email = email;
     user.password = password;
     await user.save();
+
+    await user.load('bands');
 
     const token = await auth.use('api').login(user, {
       expiresIn: '10 days',

@@ -3,6 +3,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
 import { rules, schema } from '@ioc:Adonis/Core/Validator';
 import Band from 'App/Models/Band';
+import User from 'App/Models/User';
 
 const bandSchema = schema.create({
   name: schema.string({}, [rules.minLength(1)]),
@@ -49,5 +50,47 @@ export default class BandsController {
     await band.delete();
 
     return { deleted: band.$isDeleted };
+  }
+
+  public async addMember({ request }: HttpContextContract) {
+    await request.validate({
+      schema: schema.create({
+        email: schema.string({}, [rules.email()]),
+      }),
+    });
+
+    const member = await User.findByOrFail('email', request.input('email'));
+    const band = request.band;
+    await band.related('users').attach([member.id]);
+
+    await band.load('users');
+
+    return {
+      band: band.serialize(),
+    };
+  }
+
+  public async removeMember({ request }: HttpContextContract) {
+    await request.validate({
+      schema: schema.create({
+        memberId: schema.number([rules.required()]),
+      }),
+    });
+
+    const band = request.band;
+    await band.related('users').detach([request.input('memberId')]);
+
+    await band.load('users');
+
+    if (band.users.length < 1) {
+      await band.delete();
+      return {
+        band: null,
+      };
+    }
+
+    return {
+      band: band.serialize(),
+    };
   }
 }
