@@ -22,14 +22,16 @@ export default class BandsController {
     await band.related('users').attach([user.id]);
 
     await band.load('users');
-
+    await band.load('posts');
     return {
       band: band.serialize(),
     };
   }
 
   public async read({ request }: HttpContextContract) {
-    return { band: request.band.serialize() };
+    const band = request.band;
+    await band.load('posts');
+    return { band: band.serialize() };
   }
 
   public async update({ request }: HttpContextContract) {
@@ -40,6 +42,7 @@ export default class BandsController {
     band.name = name;
     await band.save();
 
+    await band.load('posts');
     return {
       band: band.serialize(),
     };

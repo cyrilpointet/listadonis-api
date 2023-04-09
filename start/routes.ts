@@ -45,6 +45,15 @@ const bandRoutes = () => {
     .middleware('bandMember');
 };
 
+const postRoutes = () => {
+  Route.group(() => {
+    Route.post('/', 'PostsController.create');
+    Route.delete('/:postId', 'PostsController.delete');
+  })
+    .middleware('auth:api')
+    .middleware('bandMember');
+};
+
 Route.group(() => {
   // test
   Route.group(testRoute).middleware('auth:api');
@@ -55,4 +64,7 @@ Route.group(() => {
 
   // band
   Route.group(bandRoutes).prefix('band');
+
+  // Posts
+  Route.group(postRoutes).prefix('band/:id');
 }).prefix('api');
